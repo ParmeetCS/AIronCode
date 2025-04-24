@@ -1,56 +1,51 @@
 ![github-submission-banner](https://github.com/user-attachments/assets/a1493b84-e4e2-456e-a791-ce35ee2bcf2f)
 
-# 🚀 Project Title
+# 🚀 AIron Code
 
-> A one-line tagline or mission statement for your project.
+> Powering Up Dev Dreams.
 
 ---
 
 ## 📌 Problem Statement
 
-Select the problem statement number and title from the official list given in Participant Manual.
-
-**Example:**  
-**Problem Statement 7 – Transform the Future of Rural Commerce**
-
----
+Problem Statement-1- Weave AI Magic with Groq
 
 ## 🎯 Objective
+It is a AI-driven code editor powered by Groq's ultra fast interference to analyse cone in real time, providing intelligent suggestions, AI-assited lintings and auto-generated documentation.Enable seamless collaboration features and innovative enhancements to streamline workflows and boost developer productivity.
 
-What problem does your project solve, and who does it serve?  
-Briefly describe the real-world use case and the value it provides.
+The main group that we a targeting is Developers,Professionals and students
+As it is AI powered platform and provide very fast AI assistance it is helpful in fast workflow
 
----
+In real life targeting groups can use in their day to day work sessions for enhance their productivity by using this platform those are working with languages-HTML,CSS and JavaScript.
+
+It gives AI suggestions and have in-built AI assitant for review the code and make suggested changes
 
 ## 🧠 Team & Approach
 
 ### Team Name:  
-`Your team name here`
+HashCraze
 
-### Team Members:  
-- Name 1 (GitHub / LinkedIn / Role)  
-- Name 2  
-- Name 3  
-*(Add links if you want)*
+### Team Members: 
+- Parmeet Singh
+- Lakhvir Singh
+- Manish Manghra
+- Harpreet Singh Cheema
 
 ### Your Approach:  
 - Why you chose this problem  
-- Key challenges you addressed  
-- Any pivots, brainstorms, or breakthroughs during hacking  
+- Key challenges you addressed 
 
 ---
 
 ## 🛠️ Tech Stack
 
 ### Core Technologies Used:
-- Frontend:
-- Backend:
-- Database:
-- APIs:
-- Hosting:
+- Frontend: Front End is designed with HTML CSS and JavaScript 
+- APIs: We use Groq API for make it AI powered
+- API integration is done in source code using the JavaScript
 
 ### Sponsor Technologies Used (if any):
-- [ ] **Groq:** _How you used Groq_  
+- [✅] **Groq:** _How you used Groq_  
 - [ ] **Monad:** _Your blockchain implementation_  
 - [ ] **Fluvio:** _Real-time data handling_  
 - [ ] **Base:** _AgentKit / OnchainKit / Smart Wallet usage_  
@@ -63,14 +58,10 @@ Briefly describe the real-world use case and the value it provides.
 
 Highlight the most important features of your project:
 
-- ✅ Feature 1  
-- ✅ Feature 2  
-- ✅ Feature 3  
-- ✅ Feature 4  
-
-Add images, GIFs, or screenshots if helpful!
-
----
+- ✅ Inline AI Suggestions
+- ✅ Live preview of code inside the editor and outside in new tab of browser 
+- ✅ In-Built AI assitant for review the code and for AI support 
+- ✅ Option to open the file from desktop and save option to download it in the desktop after changes 
 
 ## 📽️ Demo & Deliverables
 
@@ -81,58 +72,35 @@ Add images, GIFs, or screenshots if helpful!
 
 ## ✅ Tasks & Bonus Checklist
 
-- [ ] **All members of the team completed the mandatory task - Followed at least 2 of our social channels and filled the form** (Details in Participant Manual)  
-- [ ] **All members of the team completed Bonus Task 1 - Sharing of Badges and filled the form (2 points)**  (Details in Participant Manual)
-- [ ] **All members of the team completed Bonus Task 2 - Signing up for Sprint.dev and filled the form (3 points)**  (Details in Participant Manual)
-
-*(Mark with ✅ if completed)*
-
----
+- [✅] **All members of the team completed the mandatory task - Followed at least 2 of our social channels and filled the form** (Details in Participant Manual)  
+- [✅] **All members of the team completed Bonus Task 1 - Sharing of Badges and filled the form (2 points)**  (Details in Participant Manual)
+- [✅] **All members of the team completed Bonus Task 2 - Signing up for Sprint.dev and filled the form (3 points)**  (Details in Participant Manual)
 
 ## 🧪 How to Run the Project
 
 ### Requirements:
-- Node.js / Python / Docker / etc.
-- API Keys (if any)
-- .env file setup (if needed)
-
-### Local Setup:
-```bash
-# Clone the repo
-git clone https://github.com/your-team/project-name
-
-# Install dependencies
-cd project-name
-npm install
-
-# Start development server
-npm run dev
-```
-
-Provide any backend/frontend split or environment setup notes here.
-
+It is hosted with Vercel so by simply open the provided link everyone can access this AI code editor
 ---
-
 ## 🧬 Future Scope
 
 List improvements, extensions, or follow-up features:
 
-- 📈 More integrations  
-- 🛡️ Security enhancements  
-- 🌐 Localization / broader accessibility  
-
+- 📈 In future we will provide more AI assitances and other services for boost-up the productivity of developers
+- 🛡️ Security enhancements will be done in future
+- 
 ---
-
 ## 📎 Resources / Credits
 
-- APIs or datasets used  
-- Open source libraries or tools referenced  
-- Acknowledgements  
+- API of Groq which make it AI powered
+- Youtube support
+- Github resources
+- Help from AI models
 
 ---
 
 ## 🏁 Final Words
 
-Share your hackathon journey — challenges, learnings, fun moments, or shout-outs!
+While making project for this hackathon we learn so many things and we got chance too upgrade our skills.
+This hackathon was Amazing!!!
 
 ---

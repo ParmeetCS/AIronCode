@@ -45,7 +45,7 @@ HashCraze
 - API integration is done in source code using the JavaScript
 
 ### Sponsor Technologies Used (if any):
-- ✅ **Groq:** We use API of Groq 
+✅ **Groq:** We use API of Groq 
 - [ ] **Monad:** _Your blockchain implementation_  
 - [ ] **Fluvio:** _Real-time data handling_  
 - [ ] **Base:** _AgentKit / OnchainKit / Smart Wallet usage_  
@@ -86,7 +86,6 @@ List improvements, extensions, or follow-up features:
 
 - 📈 In future we will provide more AI assitances and other services for boost-up the productivity of developers
 - 🛡️ Security enhancements will be done in future
-- 
 ---
 ## 📎 Resources / Credits
 

@@ -1,0 +1,1454 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AIronCode</title>
+    <style>
+        :root {
+            --dark-bg: #1e1e1e;
+            --dark-text: #d4d4d4;
+            --header-bg: #2c3e50;
+            --panel-header-bg: #34495e;
+            --button-bg: #3498db;
+            --button-hover: #2980b9;
+            --toolbar-bg: #ecf0f1;
+            --suggestion-bg: #2d3748;
+            --suggestion-hover: #4a5568;
+            --assistant-bg: #f8f9fa;
+            --assistant-text: #333;
+            --suggestion-font-size: 13px;
+            --suggestion-width: 400px;
+
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            background-color: #f5f5f5;
+        }
+
+        .header {
+            background-color: var(--header-bg);
+            color: white;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .main-container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .editor-column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        .preview-column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            border-left: 1px solid #ddd;
+        }
+
+        .assistant-column {
+            width: 350px;
+            display: flex;
+            flex-direction: column;
+            border-left: 1px solid #ddd;
+            background-color: var(--assistant-bg);
+            resize: horizontal;
+            overflow: auto;
+            min-width: 250px;
+            max-width: 600px;
+        }
+
+        .panel-header {
+            background-color: var(--panel-header-bg);
+            color: white;
+            padding: 8px 15px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .assistant-header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 8px 15px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .resize-controls {
+            display: flex;
+            align-items: center;
+        }
+
+        .resize-btn {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 0 5px;
+            opacity: 0.8;
+        }
+
+        .resize-btn:hover {
+            opacity: 1;
+        }
+
+        .tab-buttons {
+            display: flex;
+        }
+
+        .tab-button {
+            background: none;
+            border: none;
+            color: white;
+            padding: 0 10px;
+            cursor: pointer;
+            opacity: 0.7;
+        }
+
+        .tab-button.active {
+            opacity: 1;
+            font-weight: bold;
+        }
+
+        .editor-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            background-color: var(--dark-bg);
+        }
+
+        #html-editor,
+        #css-editor,
+        #js-editor {
+            flex: 1;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            padding: 10px;
+            border: none;
+            resize: none;
+            outline: none;
+            tab-size: 2;
+            white-space: pre;
+            background-color: var(--dark-bg);
+            color: var(--dark-text);
+            display: none;
+        }
+
+        #html-editor.active,
+        #css-editor.active,
+        #js-editor.active {
+            display: block;
+        }
+
+        #preview {
+            flex: 1;
+            border: none;
+            background-color: white;
+        }
+
+        .ai-suggestion {
+            position: absolute;
+            background-color: var(--suggestion-bg);
+            color: #e2e8f0;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: var(--suggestion-font-size);
+            cursor: pointer;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            max-width: var(--suggestion-width);
+            white-space: normal;
+        }
+
+        .ai-suggestion:hover {
+            background-color: var(--suggestion-hover);
+        }
+
+        .suggestion-controls {
+            position: absolute;
+            right: 5px;
+            top: 5px;
+            display: flex;
+            gap: 5px;
+        }
+
+        .suggestion-control-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 12px;
+            cursor: pointer;
+            opacity: 0.7;
+            padding: 2px 4px;
+        }
+
+        .suggestion-control-btn:hover {
+            opacity: 1;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+        }
+
+        .toolbar {
+            display: flex;
+            padding: 8px;
+            background-color: var(--toolbar-bg);
+            border-bottom: 1px solid #ddd;
+        }
+
+        button {
+            background-color: var(--button-bg);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            margin-right: 5px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        button:hover {
+            background-color: var(--button-hover);
+        }
+
+        .status {
+            font-size: 12px;
+            color: #7f8c8d;
+            padding: 0 10px;
+        }
+
+        .language-selector {
+            display: flex;
+            background-color: var(--panel-header-bg);
+        }
+
+        .language-tab {
+            padding: 8px 15px;
+            color: white;
+            cursor: pointer;
+            opacity: 0.7;
+        }
+
+        .language-tab.active {
+            opacity: 1;
+            font-weight: bold;
+            background-color: var(--dark-bg);
+        }
+
+        .assistant-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 8px;
+            line-height: 1.5;
+        }
+
+        .user-message {
+            background-color: #e3f2fd;
+            align-self: flex-end;
+            margin-left: 20%;
+        }
+
+        .assistant-message {
+            background-color: white;
+            border: 1px solid #ddd;
+            margin-right: 20%;
+        }
+
+        .assistant-input-area {
+            padding: 10px;
+            border-top: 1px solid #ddd;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #assistant-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            resize: none;
+            height: 80px;
+        }
+
+        .assistant-actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        .assistant-btn {
+            flex: 1;
+            padding: 8px;
+            font-size: 12px;
+        }
+
+        .code-block {
+            background-color: #f0f0f0;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 13px;
+            margin: 5px 0;
+            overflow-x: auto;
+        }
+
+        .copy-btn {
+            background-color: #e0e0e0;
+            border: none;
+            padding: 2px 5px;
+            font-size: 11px;
+            float: right;
+            cursor: pointer;
+            border-radius: 3px;
+        }
+
+        .copy-btn:hover {
+            background-color: #d0d0d0;
+        }
+
+        .toggle-assistant {
+            background-color: #16a085;
+            margin-left: 10px;
+        }
+
+        .toggle-assistant:hover {
+            background-color: #1abc9c;
+        }
+
+        #openInNewTabBtn {
+            background-color: #9b59b6;
+        }
+
+        #openInNewTabBtn:hover {
+            background-color: #8e44ad;
+        }
+
+        #recommendBtn {
+            background-color: #e67e22;
+        }
+
+        #recommendBtn:hover {
+            background-color: #d35400;
+        }
+
+        #settingsBtn {
+            background-color: #7f8c8d;
+            margin-left: auto;
+        }
+
+        #settingsBtn:hover {
+            background-color: #95a5a6;
+        }
+
+        .settings-panel {
+            position: absolute;
+            top: 50px;
+            right: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            width: 300px;
+            z-index: 200;
+            display: none;
+        }
+
+        .settings-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .settings-header h3 {
+            margin: 0;
+        }
+
+        .close-settings {
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            color: #7f8c8d;
+        }
+
+        .settings-section {
+            margin-bottom: 20px;
+        }
+
+        .settings-section h4 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+
+        .settings-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .settings-label {
+            flex: 1;
+        }
+
+        .settings-control {
+            flex: 1;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+        }
+
+        .settings-slider {
+            width: 100px;
+        }
+
+        .settings-value {
+            width: 40px;
+            text-align: right;
+            margin-left: 10px;
+        }
+
+        .settings-preset {
+            display: flex;
+            gap: 5px;
+            margin-top: 10px;
+        }
+
+        .preset-btn {
+            flex: 1;
+            padding: 5px;
+            font-size: 12px;
+        }
+
+        .improvement-section {
+            margin-bottom: 15px;
+        }
+
+        .improvement-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #2c3e50;
+        }
+
+        .improvement-explanation {
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .resize-handle {
+            width: 5px;
+            background: #ddd;
+            cursor: ew-resize;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .resize-handle:hover {
+            background: #bbb;
+        }
+
+        .resize-handle-dots {
+            width: 2px;
+            height: 20px;
+            background-image: radial-gradient(circle, #888 1px, transparent 2px);
+            background-size: 2px 4px;
+            background-repeat: repeat-y;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <h2>
+            <>AIronCode
+        </h2>
+        <div>
+            <button id="settingsBtn">Settings</button>
+            <button id="toggleAssistant" class="toggle-assistant">Toggle Assistant</button>
+            <span class="status" id="status">Ready</span>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div class="editor-column">
+            <div class="language-selector">
+                <div class="language-tab active" data-lang="html">HTML</div>
+                <div class="language-tab" data-lang="css">CSS</div>
+                <div class="language-tab" data-lang="js">JavaScript</div>
+            </div>
+
+            <div class="editor-container">
+                <div class="panel-header">
+                    <span>Editor</span>
+                    <div class="tab-buttons">
+                        <button class="tab-button active" data-for="html">HTML</button>
+                        <button class="tab-button" data-for="css">CSS</button>
+                        <button class="tab-button" data-for="js">JS</button>
+                    </div>
+                </div>
+                <div class="toolbar">
+                    <button id="runBtn">Run & Preview</button>
+                    <button id="openInNewTabBtn">Open in New Tab</button>
+                    <button id="aiHelpBtn">Get AI Help</button>
+                    <button id="saveBtn">Save to Disk</button>
+                    <button id="openBtn">Open File</button>
+                </div>
+                <textarea id="html-editor" class="active" spellcheck="false">
+&lt;h1&gt;Welcome to my page&lt;/h1&gt;
+&lt;div class="container"&gt;
+    &lt;p&gt;This is a sample HTML document.&lt;/p&gt;
+    &lt;button id="demo-btn"&gt;Click Me&lt;/button&gt;
+&lt;/div&gt;</textarea>
+                <textarea id="css-editor" spellcheck="false">body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #f5f5f5;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+#demo-btn {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+}</textarea>
+                <textarea id="js-editor" spellcheck="false">document.getElementById('demo-btn').addEventListener('click', function() {
+    alert('Button clicked!');
+    this.style.backgroundColor = '#2ecc71';
+    setTimeout(() => {
+        this.style.backgroundColor = '#3498db';
+    }, 500);
+});</textarea>
+            </div>
+        </div>
+        <div class="preview-column">
+            <div class="panel-header">Live Preview</div>
+            <iframe id="preview"></iframe>
+        </div>
+        <div class="resize-handle" id="resizeHandle">
+            <div class="resize-handle-dots"></div>
+        </div>
+        <div class="assistant-column" id="assistantPanel" style="display: none;">
+            <div class="assistant-header">
+                <span>AI Assistant</span>
+                <div class="resize-controls">
+                    <button class="resize-btn" id="assistantSizeDecrease">−</button>
+                    <button class="resize-btn" id="assistantSizeReset">Reset</button>
+                    <button class="resize-btn" id="assistantSizeIncrease">+</button>
+                </div>
+            </div>
+            <div class="assistant-messages" id="assistantMessages">
+                <div class="message assistant-message">
+                    <p>Hello! I'm your AI coding assistant. I can help you with:</p>
+                    <ul>
+                        <li>Answering questions about your code</li>
+                        <li>Reviewing and optimizing your code</li>
+                        <li>Providing complete improved versions</li>
+                        <li>Suggesting snippets and improvements</li>
+                    </ul>
+                    <p>How can I help you with your HTML, CSS, or JavaScript today?</p>
+                </div>
+            </div>
+            <div class="assistant-input-area">
+                <textarea id="assistant-input" placeholder="Ask me anything about your code..."></textarea>
+                <div class="assistant-actions">
+                    <button id="askBtn" class="assistant-btn">Ask Question</button>
+                    <button id="reviewBtn" class="assistant-btn">Review Code</button>
+                    <button id="optimizeBtn" class="assistant-btn">Optimize</button>
+                    <button id="recommendBtn" class="assistant-btn">Recommend Improvements</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="settings-panel" id="settingsPanel">
+        <div class="settings-header">
+            <h3>Settings</h3>
+            <button class="close-settings" id="closeSettings">×</button>
+        </div>
+
+        <div class="settings-section">
+            <h4>Assistant Panel</h4>
+            <div class="settings-row">
+                <div class="settings-label">Panel Width:</div>
+                <div class="settings-control">
+                    <input type="range" class="settings-slider" id="assistantWidthSlider" min="250" max="600"
+                        value="350">
+                    <span class="settings-value" id="assistantWidthValue">350px</span>
+                </div>
+            </div>
+            <div class="settings-preset">
+                <button class="preset-btn" data-width="250">Small</button>
+                <button class="preset-btn" data-width="350">Medium</button>
+                <button class="preset-btn" data-width="500">Large</button>
+            </div>
+        </div>
+
+        <div class="settings-section">
+            <h4>Code Suggestions</h4>
+            <div class="settings-row">
+                <div class="settings-label">Font Size:</div>
+                <div class="settings-control">
+                    <input type="range" class="settings-slider" id="suggestionFontSlider" min="10" max="20" value="13">
+                    <span class="settings-value" id="suggestionFontValue">13px</span>
+                </div>
+            </div>
+            <div class="settings-row">
+                <div class="settings-label">Max Width:</div>
+                <div class="settings-control">
+                    <input type="range" class="settings-slider" id="suggestionWidthSlider" min="200" max="800"
+                        value="400">
+                    <span class="settings-value" id="suggestionWidthValue">400px</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const htmlEditor = document.getElementById('html-editor');
+        const cssEditor = document.getElementById('css-editor');
+        const jsEditor = document.getElementById('js-editor');
+        const preview = document.getElementById('preview');
+        const runBtn = document.getElementById('runBtn');
+        const openInNewTabBtn = document.getElementById('openInNewTabBtn');
+        const aiHelpBtn = document.getElementById('aiHelpBtn');
+        const statusElement = document.getElementById('status');
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const languageTabs = document.querySelectorAll('.language-tab');
+        const toggleAssistantBtn = document.getElementById('toggleAssistant');
+        const assistantPanel = document.getElementById('assistantPanel');
+        const assistantMessages = document.getElementById('assistantMessages');
+        const assistantInput = document.getElementById('assistant-input');
+        const askBtn = document.getElementById('askBtn');
+        const reviewBtn = document.getElementById('reviewBtn');
+        const optimizeBtn = document.getElementById('optimizeBtn');
+        const recommendBtn = document.getElementById('recommendBtn');
+        const resizeHandle = document.getElementById('resizeHandle');
+        const saveBtn = document.getElementById('saveBtn');
+        const openBtn = document.getElementById('openBtn');
+
+        const settingsBtn = document.getElementById('settingsBtn');
+        const settingsPanel = document.getElementById('settingsPanel');
+        const closeSettings = document.getElementById('closeSettings');
+        const assistantWidthSlider = document.getElementById('assistantWidthSlider');
+        const assistantWidthValue = document.getElementById('assistantWidthValue');
+        const suggestionFontSlider = document.getElementById('suggestionFontSlider');
+        const suggestionFontValue = document.getElementById('suggestionFontValue');
+        const suggestionWidthSlider = document.getElementById('suggestionWidthSlider');
+        const suggestionWidthValue = document.getElementById('suggestionWidthValue');
+        const presetButtons = document.querySelectorAll('.preset-btn');
+        const assistantSizeDecrease = document.getElementById('assistantSizeDecrease');
+        const assistantSizeReset = document.getElementById('assistantSizeReset');
+        const assistantSizeIncrease = document.getElementById('assistantSizeIncrease');
+
+        const GROQ_API_KEY = "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";
+
+        let currentSuggestion = null;
+        let lastCursorPosition = 0;
+        let currentEditor = htmlEditor;
+        let currentLanguage = 'html';
+        let resizing = false;
+        let startX = 0;
+        let startWidth = 0;
+
+        let settings = {
+            assistantWidth: 350,
+            suggestionFontSize: 13,
+            suggestionWidth: 400
+        };
+
+        updatePreview();
+        setupEventListeners();
+        loadSettings();
+        applySettings();
+
+        function updatePreview() {
+            const fullHtml = `<!DOCTYPE html><html><head><style>${cssEditor.value}</style></head><body>${htmlEditor.value}<script>${jsEditor.value}</` + `script></body></html>`;
+            preview.srcdoc = fullHtml;
+            statusElement.textContent = 'Preview updated';
+        }
+
+        function setupEventListeners() {
+            runBtn.addEventListener('click', updatePreview);
+            openInNewTabBtn.addEventListener('click', openInNewTab);
+            aiHelpBtn.addEventListener('click', getAIHelp);
+            toggleAssistantBtn.addEventListener('click', toggleAssistantPanel);
+            askBtn.addEventListener('click', askQuestion);
+            reviewBtn.addEventListener('click', reviewCode);
+            optimizeBtn.addEventListener('click', optimizeCode);
+            recommendBtn.addEventListener('click', recommendImprovements);
+            saveBtn.addEventListener('click', saveFilesToDisk);
+            openBtn.addEventListener('click', openFiles);
+
+            resizeHandle.addEventListener('mousedown', startResize);
+            document.addEventListener('mousemove', doResize);
+            document.addEventListener('mouseup', stopResize);
+
+            settingsBtn.addEventListener('click', toggleSettings);
+            closeSettings.addEventListener('click', toggleSettings);
+            assistantWidthSlider.addEventListener('input', updateAssistantWidth);
+            suggestionFontSlider.addEventListener('input', updateSuggestionFont);
+            suggestionWidthSlider.addEventListener('input', updateSuggestionWidth);
+
+            assistantSizeDecrease.addEventListener('click', () => quickResizeAssistant(-50));
+            assistantSizeReset.addEventListener('click', () => resetAssistantSize());
+            assistantSizeIncrease.addEventListener('click', () => quickResizeAssistant(50));
+
+            presetButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const width = parseInt(btn.dataset.width);
+                    settings.assistantWidth = width;
+                    assistantWidthSlider.value = width;
+                    assistantWidthValue.textContent = width + 'px';
+                    applySettings();
+                    saveSettings();
+                });
+            });
+
+            [htmlEditor, cssEditor, jsEditor].forEach(editor => {
+                editor.addEventListener('input', debounce(handleEditorInput, 1000));
+                editor.addEventListener('keydown', handleKeyDown);
+                editor.addEventListener('click', clearSuggestion);
+            });
+
+            tabButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    showEditor(btn.dataset.for);
+                });
+            });
+
+            languageTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    document.querySelectorAll('.language-tab').forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    showEditor(tab.dataset.lang);
+                });
+            });
+
+            document.addEventListener('click', (e) => {
+                if (settingsPanel.style.display === 'block' &&
+                    !settingsPanel.contains(e.target) &&
+                    e.target !== settingsBtn) {
+                    settingsPanel.style.display = 'none';
+                }
+            });
+        }
+
+        function startResize(e) {
+            resizing = true;
+            startX = e.clientX;
+            startWidth = parseInt(getComputedStyle(assistantPanel).width, 10);
+            document.body.style.cursor = 'ew-resize';
+            e.preventDefault();
+        }
+
+        function doResize(e) {
+            if (!resizing) return;
+
+            const width = startWidth - (e.clientX - startX);
+            if (width >= 250 && width <= 600) {
+                settings.assistantWidth = width;
+                assistantPanel.style.width = width + 'px';
+                assistantWidthSlider.value = width;
+                assistantWidthValue.textContent = width + 'px';
+            }
+            e.preventDefault();
+        }
+
+        function stopResize() {
+            if (resizing) {
+                resizing = false;
+                document.body.style.cursor = '';
+                saveSettings();
+            }
+        }
+
+        function quickResizeAssistant(change) {
+            let newWidth = settings.assistantWidth + change;
+            newWidth = Math.max(250, Math.min(600, newWidth));
+
+            settings.assistantWidth = newWidth;
+            assistantPanel.style.width = newWidth + 'px';
+            assistantWidthSlider.value = newWidth;
+            assistantWidthValue.textContent = newWidth + 'px';
+            saveSettings();
+        }
+
+        function resetAssistantSize() {
+            settings.assistantWidth = 350;
+            assistantPanel.style.width = '350px';
+            assistantWidthSlider.value = 350;
+            assistantWidthValue.textContent = '350px';
+            saveSettings();
+        }
+
+        function toggleSettings() {
+            if (settingsPanel.style.display === 'block') {
+                settingsPanel.style.display = 'none';
+            } else {
+                settingsPanel.style.display = 'block';
+            }
+        }
+
+        function updateAssistantWidth() {
+            const width = assistantWidthSlider.value;
+            settings.assistantWidth = parseInt(width);
+            assistantWidthValue.textContent = width + 'px';
+            applySettings();
+            saveSettings();
+        }
+
+        function updateSuggestionFont() {
+            const size = suggestionFontSlider.value;
+            settings.suggestionFontSize = parseInt(size);
+            suggestionFontValue.textContent = size + 'px';
+            applySettings();
+            saveSettings();
+        }
+
+        function updateSuggestionWidth() {
+            const width = suggestionWidthSlider.value;
+            settings.suggestionWidth = parseInt(width);
+            suggestionWidthValue.textContent = width + 'px';
+            applySettings();
+            saveSettings();
+        }
+
+        function saveSettings() {
+            localStorage.setItem('ironCodeSettings', JSON.stringify(settings));
+        }
+
+        function loadSettings() {
+            const savedSettings = localStorage.getItem('ironCodeSettings');
+            if (savedSettings) {
+                settings = JSON.parse(savedSettings);
+
+                assistantWidthSlider.value = settings.assistantWidth;
+                assistantWidthValue.textContent = settings.assistantWidth + 'px';
+
+                suggestionFontSlider.value = settings.suggestionFontSize;
+                suggestionFontValue.textContent = settings.suggestionFontSize + 'px';
+
+                suggestionWidthSlider.value = settings.suggestionWidth;
+                suggestionWidthValue.textContent = settings.suggestionWidth + 'px';
+            }
+        }
+
+        function applySettings() {
+            assistantPanel.style.width = settings.assistantWidth + 'px';
+
+            document.documentElement.style.setProperty('--suggestion-font-size', settings.suggestionFontSize + 'px');
+            document.documentElement.style.setProperty('--suggestion-width', settings.suggestionWidth + 'px');
+
+            if (currentSuggestion) {
+                currentSuggestion.style.fontSize = settings.suggestionFontSize + 'px';
+                currentSuggestion.style.maxWidth = settings.suggestionWidth + 'px';
+            }
+        }
+
+        function showEditor(lang) {
+            htmlEditor.classList.remove('active');
+            cssEditor.classList.remove('active');
+            jsEditor.classList.remove('active');
+            document.getElementById(`${lang}-editor`).classList.add('active');
+            currentEditor = document.getElementById(`${lang}-editor`);
+            currentLanguage = lang;
+        }
+
+        function handleEditorInput(e) {
+            lastCursorPosition = e.target.selectionStart;
+        }
+
+        function handleKeyDown(e) {
+            if (e.key === 'Tab' && currentSuggestion) {
+                e.preventDefault();
+                acceptSuggestion();
+            } else if (e.key === 'Escape') {
+                clearSuggestion();
+            }
+        }
+
+        function clearSuggestion() {
+            if (currentSuggestion) {
+                document.body.removeChild(currentSuggestion);
+                currentSuggestion = null;
+            }
+        }
+
+        function showSuggestion(text, position) {
+            clearSuggestion();
+
+           
+            const editorRect = currentEditor.getBoundingClientRect();
+            const lineHeight = 18; 
+            const charsPerLine = Math.floor(currentEditor.clientWidth / 8); 
+
+            
+            const textBeforeCursor = currentEditor.value.substring(0, position);
+            const lines = textBeforeCursor.split('\n');
+            const lineNum = lines.length;
+            const column = lines[lines.length - 1].length;
+
+       
+            const top = editorRect.top + (lineNum * lineHeight) + 30;
+            const left = editorRect.left + (column % charsPerLine) * 8 + 10;
+
+           
+            currentSuggestion = document.createElement('div');
+            currentSuggestion.className = 'ai-suggestion';
+            currentSuggestion.textContent = text;
+            currentSuggestion.style.top = `${top}px`;
+            currentSuggestion.style.left = `${left}px`;
+            currentSuggestion.style.fontSize = settings.suggestionFontSize + 'px';
+            currentSuggestion.style.maxWidth = settings.suggestionWidth + 'px';
+
+
+            const controlsDiv = document.createElement('div');
+            controlsDiv.className = 'suggestion-controls';
+
+            const decreaseSizeBtn = document.createElement('button');
+            decreaseSizeBtn.className = 'suggestion-control-btn';
+            decreaseSizeBtn.textContent = 'A-';
+            decreaseSizeBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                changeSuggestionSize(-1);
+            });
+
+            const increaseSizeBtn = document.createElement('button');
+            increaseSizeBtn.className = 'suggestion-control-btn';
+            increaseSizeBtn.textContent = 'A+';
+            increaseSizeBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                changeSuggestionSize(1);
+            });
+
+            controlsDiv.appendChild(decreaseSizeBtn);
+            controlsDiv.appendChild(increaseSizeBtn);
+            currentSuggestion.appendChild(controlsDiv);
+
+            currentSuggestion.addEventListener('click', acceptSuggestion);
+
+            document.body.appendChild(currentSuggestion);
+        }
+
+        function changeSuggestionSize(change) {
+            if (!currentSuggestion) return;
+
+            let currentSize = parseInt(getComputedStyle(currentSuggestion).fontSize);
+            let newSize = Math.max(10, Math.min(20, currentSize + change));
+
+            currentSuggestion.style.fontSize = newSize + 'px';
+
+            settings.suggestionFontSize = newSize;
+            suggestionFontSlider.value = newSize;
+            suggestionFontValue.textContent = newSize + 'px';
+            saveSettings();
+        }
+
+        function acceptSuggestion() {
+            if (!currentSuggestion) return;
+            const cursorPos = lastCursorPosition;
+
+    
+            const textBefore = currentEditor.value.substring(0, cursorPos);
+            const textAfter = currentEditor.value.substring(cursorPos);
+
+            currentEditor.value = textBefore + suggestionText + textAfter;
+
+            currentEditor.selectionStart = cursorPos + suggestionText.length;
+            currentEditor.selectionEnd = cursorPos + suggestionText.length;
+
+            clearSuggestion();
+            updatePreview();
+        }
+
+        function openInNewTab() {
+            const fullHtml = `<!DOCTYPE html><html><head><style>${cssEditor.value}</style></head><body>${htmlEditor.value}<script>${jsEditor.value}</` + `script></body></html>`;
+            const blob = new Blob([fullHtml], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            window.open(url, '_blank');
+            statusElement.textContent = 'Opened in new tab';
+        }
+
+        async function getAIHelp() {
+            const cursorPos = currentEditor.selectionStart;
+            const textBefore = currentEditor.value.substring(0, cursorPos);
+            const textAfter = currentEditor.value.substring(cursorPos);
+
+            const contextStart = Math.max(0, cursorPos - 100);
+            const contextEnd = Math.min(currentEditor.value.length, cursorPos + 100);
+            const context = currentEditor.value.substring(contextStart, contextEnd);
+
+            statusElement.textContent = 'Getting AI suggestions...';
+
+            try {
+                let prompt = '';
+                let systemMessage = '';
+
+                switch (currentLanguage) {
+                    case 'html':
+                        systemMessage = 'You are a helpful HTML coding assistant. Provide only the HTML that should be inserted at the cursor position, without any additional explanation or commentary.';
+                        prompt = `The user is editing an HTML file. Here's the context around their cursor:
+                        
+${context}
+
+Provide a concise suggestion for what to add at the cursor position. Only provide the HTML to insert.`;
+                        break;
+                    case 'css':
+                        systemMessage = 'You are a helpful CSS coding assistant. Provide only the CSS that should be inserted at the cursor position, without any additional explanation or commentary.';
+                        prompt = `The user is editing a CSS file. Here's the context around their cursor:
+                        
+${context}
+
+Provide a concise suggestion for what to add at the cursor position. Only provide the CSS to insert.`;
+                        break;
+                    case 'js':
+                        systemMessage = 'You are a helpful JavaScript coding assistant. Provide only the JavaScript that should be inserted at the cursor position, without any additional explanation or commentary.';
+                        prompt = `The user is editing a JavaScript file. Here's the context around their cursor:
+                        
+${context}
+
+Provide a concise suggestion for what to add at the cursor position. Only provide the JavaScript to insert.`;
+                        break;
+                }
+
+                const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${GROQ_API_KEY}`
+                    },
+                    body: JSON.stringify({
+                        model: 'llama3-70b-8192',
+                        messages: [
+                            {
+                                role: 'system',
+                                content: systemMessage
+                            },
+                            {
+                                role: 'user',
+                                content: prompt
+                            }
+                        ],
+                        temperature: 0.7,
+                        max_tokens: 100
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`API request failed with status ${response.status}`);
+                }
+
+                const data = await response.json();
+                const suggestion = data.choices[0]?.message?.content?.trim();
+
+                if (suggestion) {
+                    showSuggestion(suggestion, cursorPos);
+                    statusElement.textContent = 'Suggestion ready (Tab to accept)';
+                } else {
+                    statusElement.textContent = 'No suggestion available';
+                }
+            } catch (error) {
+                console.error('Error getting AI suggestion:', error);
+                statusElement.textContent = 'Error getting suggestion';
+            }
+        }
+
+        function toggleAssistantPanel() {
+            if (assistantPanel.style.display === 'none') {
+                assistantPanel.style.display = 'flex';
+                resizeHandle.style.display = 'flex';
+                toggleAssistantBtn.textContent = 'Hide Assistant';
+            } else {
+                assistantPanel.style.display = 'none';
+                resizeHandle.style.display = 'none';
+                toggleAssistantBtn.textContent = 'Show Assistant';
+            }
+        }
+
+        function addMessage(content, isUser = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user-message' : 'assistant-message'}`;
+
+        
+            let processedContent = content;
+
+            const improvementSections = content.match(/### .+?[\s\S]+?(?=###|$)/g) || [];
+            improvementSections.forEach(section => {
+                const titleMatch = section.match(/### (.+?)\n/);
+                const title = titleMatch ? titleMatch[1] : 'Improvement';
+                const explanation = section.replace(/### .+?\n/, '').replace(/```[\s\S]*?```/g, '');
+                const codeBlocks = section.match(/```[\s\S]*?```/g) || [];
+
+                let sectionHtml = `
+                    <div class="improvement-section">
+                        <div class="improvement-title">${title}</div>
+                        <div class="improvement-explanation">${explanation}</div>
+                `;
+
+                codeBlocks.forEach(block => {
+                    const code = block.replace(/```(\w*)\n?/, '').replace(/```$/, '');
+                    const language = block.match(/```(\w*)\n?/)[1] || '';
+                    sectionHtml += `
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+                            ${language ? `<div class="language-label">${language}</div>` : ''}
+                            <pre>${code}</pre>
+                        </div>
+                    `;
+                });
+
+                sectionHtml += `</div>`;
+                processedContent = processedContent.replace(section, sectionHtml);
+            });
+
+            
+            const codeBlocks = processedContent.match(/```[\s\S]*?```/g) || [];
+            codeBlocks.forEach(block => {
+                const code = block.replace(/```(\w*)\n?/, '').replace(/```$/, '');
+                const language = block.match(/```(\w*)\n?/)[1] || '';
+                const codeBlockHtml = `
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+                        ${language ? `<div class="language-label">${language}</div>` : ''}
+                        <pre>${code}</pre>
+                    </div>
+                `;
+                processedContent = processedContent.replace(block, codeBlockHtml);
+            });
+
+            messageDiv.innerHTML = processedContent;
+            assistantMessages.appendChild(messageDiv);
+            assistantMessages.scrollTop = assistantMessages.scrollHeight;
+        }
+
+        function copyToClipboard(button) {
+            const codeBlock = button.parentElement;
+            const code = codeBlock.querySelector('pre').textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                button.textContent = 'Copied!';
+                setTimeout(() => {
+                    button.textContent = 'Copy';
+                }, 2000);
+            });
+        }
+
+        async function askQuestion() {
+            const question = assistantInput.value.trim();
+            if (!question) return;
+
+            addMessage(question, true);
+            assistantInput.value = '';
+
+            try {
+                const response = await callGroqAPI([
+                    {
+                        role: "system",
+                        content: `You are an expert web development assistant. The user is working with HTML, CSS, and JavaScript. 
+                        Here's their current code:
+                        HTML:
+                        ${htmlEditor.value}
+                        
+                        CSS:
+                        ${cssEditor.value}
+                        
+                        JavaScript:
+                        ${jsEditor.value}
+                        
+                        Provide clear, concise answers to their questions. When suggesting code changes, wrap them in code blocks with language markers (\`\`\`html, \`\`\`css, \`\`\`javascript).`
+                    },
+                    {
+                        role: "user",
+                        content: question
+                    }
+                ]);
+
+                addMessage(response);
+            } catch (error) {
+                console.error("Error asking question:", error);
+                addMessage("Sorry, I encountered an error while processing your question. Please try again.", false);
+            }
+        }
+
+        async function reviewCode() {
+            addMessage("Please review my code and suggest improvements.", true);
+
+            try {
+                const response = await callGroqAPI([
+                    {
+                        role: "system",
+                        content: `You are an expert code reviewer. The user has asked you to review their web code. 
+                        Here's their current code:
+                        HTML:
+                        ${htmlEditor.value}
+                        
+                        CSS:
+                        ${cssEditor.value}
+                        
+                        JavaScript:
+                        ${jsEditor.value}
+                        
+                        Provide a detailed code review with specific suggestions for improvement. 
+                        Organize your feedback by file type (HTML, CSS, JS). 
+                        For each suggestion, provide the improved code wrapped in appropriate code blocks.`
+                    },
+                    {
+                        role: "user",
+                        content: "Please review my code and suggest improvements."
+                    }
+                ]);
+
+                addMessage(response);
+            } catch (error) {
+                console.error("Error reviewing code:", error);
+                addMessage("Sorry, I encountered an error while reviewing your code. Please try again.", false);
+            }
+        }
+
+        async function optimizeCode() {
+            addMessage("Please optimize my code for better performance and maintainability.", true);
+
+            try {
+                const response = await callGroqAPI([
+                    {
+                        role: "system",
+                        content: `You are an expert at code optimization. The user has asked you to optimize their web code. 
+                        Here's their current code:
+                        HTML:
+                        ${htmlEditor.value}
+                        
+                        CSS:
+                        ${cssEditor.value}
+                        
+                        JavaScript:
+                        ${jsEditor.value}
+                        
+                        Provide optimized versions of each file with explanations of the improvements made. 
+                        Focus on performance, readability, and maintainability. 
+                        Wrap all code examples in appropriate code blocks.`
+                    },
+                    {
+                        role: "user",
+                        content: "Please optimize my code for better performance and maintainability."
+                    }
+                ]);
+
+                addMessage(response);
+            } catch (error) {
+                console.error("Error optimizing code:", error);
+                addMessage("Sorry, I encountered an error while optimizing your code. Please try again.", false);
+            }
+        }
+
+        async function recommendImprovements() {
+            addMessage("Please recommend comprehensive improvements to my code.", true);
+
+            try {
+                const response = await callGroqAPI([
+                    {
+                        role: "system",
+                        content: `You are an expert web developer. The user wants you to recommend comprehensive improvements to their code.
+                        Provide complete versions of each file (HTML, CSS, JS) with your recommended changes implemented.
+                        For each file, first explain the key improvements, then provide the complete updated code in a code block.
+                        Structure your response like this:
+                        
+                        ### HTML Improvements
+                        [explanation of changes]
+                        \`\`\`html
+                        [complete improved HTML code]
+                        \`\`\`
+                        
+                        ### CSS Improvements
+                        [explanation of changes]
+                        \`\`\`css
+                        [complete improved CSS code]
+                        \`\`\`
+                        
+                        ### JavaScript Improvements
+                        [explanation of changes]
+                        \`\`\`javascript
+                        [complete improved JavaScript code]
+                        \`\`\`
+                        
+                        Here's their current code:
+                        HTML:
+                        ${htmlEditor.value}
+                        
+                        CSS:
+                        ${cssEditor.value}
+                        
+                        JavaScript:
+                        ${jsEditor.value}`
+                    },
+                    {
+                        role: "user",
+                        content: "Please recommend comprehensive improvements to my code and provide complete updated versions of each file."
+                    }
+                ]);
+
+                addMessage(response);
+            } catch (error) {
+                console.error("Error recommending improvements:", error);
+                addMessage("Sorry, I encountered an error while recommending improvements. Please try again.", false);
+            }
+        }
+
+        async function callGroqAPI(messages) {
+            statusElement.textContent = "Assistant is thinking...";
+
+            const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${GROQ_API_KEY}`
+                },
+                body: JSON.stringify({
+                    model: 'llama3-70b-8192',
+                    messages: messages,
+                    temperature: 0.7,
+                    max_tokens: 2000
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`API request failed with status ${response.status}`);
+            }
+
+            const data = await response.json();
+            statusElement.textContent = "Ready";
+            return data.choices[0]?.message?.content?.trim() || "I couldn't generate a response. Please try again.";
+        }
+
+        function debounce(func, timeout = 300) {
+            let timer;
+            return (...args) => {
+                clearTimeout(timer);
+                timer = setTimeout(() => { func.apply(this, args); }, timeout);
+            };
+        }
+        function saveFilesToDisk() {
+
+            const htmlContent = htmlEditor.value;
+            const cssContent = cssEditor.value;
+            const jsContent = jsEditor.value;
+
+            function saveFile(content, filename, contentType) {
+                const blob = new Blob([content], { type: contentType });
+                const a = document.createElement('a');
+                a.download = filename;
+                a.href = URL.createObjectURL(blob);
+                a.click();
+                URL.revokeObjectURL(a.href);
+            }
+
+            saveFile(htmlContent, 'index.html', 'text/html');
+            saveFile(cssContent, 'styles.css', 'text/css');
+            saveFile(jsContent, 'script.js', 'application/javascript');
+
+            statusElement.textContent = 'Files saved to disk';
+        }
+        function openFiles() {
+            const fileInput = document.createElement('input');
+            fileInput.type = 'file';
+            fileInput.accept = '.html,.css,.js,.txt';
+            fileInput.multiple = true;
+
+            fileInput.addEventListener('change', function (e) {
+                const files = e.target.files;
+
+                if (!files.length) return;
+
+                for (let i = 0; i < files.length; i++) {
+                    const file = files[i];
+                    const reader = new FileReader();
+
+                    reader.onload = function (e) {
+                        const content = e.target.result;
+                        const fileName = file.name.toLowerCase();
+
+                        if (fileName.endsWith('.html') || fileName.endsWith('.htm')) {
+                            htmlEditor.value = content;
+                            document.querySelector('.tab-button[data-for="html"]').click();
+                        } else if (fileName.endsWith('.css')) {
+                            cssEditor.value = content;
+                        
+                            document.querySelector('.tab-button[data-for="css"]').click();
+                        } else if (fileName.endsWith('.js')) {
+                            jsEditor.value = content;
+                           
+                            document.querySelector('.tab-button[data-for="js"]').click();
+                        } else {
+    
+                            if (content.includes('<html') || content.includes('<!DOCTYPE')) {
+                                htmlEditor.value = content;
+                                document.querySelector('.tab-button[data-for="html"]').click();
+                            } else if (content.includes('{') && content.includes('}') &&
+                                (content.includes('function') || content.includes('var ') ||
+                                    content.includes('let ') || content.includes('const '))) {
+                                jsEditor.value = content;
+                                document.querySelector('.tab-button[data-for="js"]').click();
+                            } else if (content.includes('{') && content.includes('}')) {
+                                cssEditor.value = content;
+                                document.querySelector('.tab-button[data-for="css"]').click();
+                            }
+                        }
+                    };
+
+                    reader.readAsText(file);
+                }
+
+                setTimeout(updatePreview, 300);
+                statusElement.textContent = 'Files loaded';
+            });
+
+            fileInput.click();
+        }
+        window.copyToClipboard = copyToClipboard;
+    </script>
+</body>
+
+</html>

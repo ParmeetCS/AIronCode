@@ -922,22 +922,22 @@
         function showSuggestion(text, position) {
             clearSuggestion();
 
-           
-            const editorRect = currentEditor.getBoundingClientRect();
-            const lineHeight = 18; 
-            const charsPerLine = Math.floor(currentEditor.clientWidth / 8); 
 
-            
+            const editorRect = currentEditor.getBoundingClientRect();
+            const lineHeight = 18;
+            const charsPerLine = Math.floor(currentEditor.clientWidth / 8);
+
+
             const textBeforeCursor = currentEditor.value.substring(0, position);
             const lines = textBeforeCursor.split('\n');
             const lineNum = lines.length;
             const column = lines[lines.length - 1].length;
 
-       
+
             const top = editorRect.top + (lineNum * lineHeight) + 30;
             const left = editorRect.left + (column % charsPerLine) * 8 + 10;
 
-           
+
             currentSuggestion = document.createElement('div');
             currentSuggestion.className = 'ai-suggestion';
             currentSuggestion.textContent = text;
@@ -946,29 +946,6 @@
             currentSuggestion.style.fontSize = settings.suggestionFontSize + 'px';
             currentSuggestion.style.maxWidth = settings.suggestionWidth + 'px';
 
-
-            const controlsDiv = document.createElement('div');
-            controlsDiv.className = 'suggestion-controls';
-
-            const decreaseSizeBtn = document.createElement('button');
-            decreaseSizeBtn.className = 'suggestion-control-btn';
-            decreaseSizeBtn.textContent = 'A-';
-            decreaseSizeBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                changeSuggestionSize(-1);
-            });
-
-            const increaseSizeBtn = document.createElement('button');
-            increaseSizeBtn.className = 'suggestion-control-btn';
-            increaseSizeBtn.textContent = 'A+';
-            increaseSizeBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                changeSuggestionSize(1);
-            });
-
-            controlsDiv.appendChild(decreaseSizeBtn);
-            controlsDiv.appendChild(increaseSizeBtn);
-            currentSuggestion.appendChild(controlsDiv);
 
             currentSuggestion.addEventListener('click', acceptSuggestion);
 
@@ -993,7 +970,9 @@
             if (!currentSuggestion) return;
             const cursorPos = lastCursorPosition;
 
-    
+
+            const suggestionText = currentSuggestion.textContent;
+
             const textBefore = currentEditor.value.substring(0, cursorPos);
             const textAfter = currentEditor.value.substring(cursorPos);
 
@@ -1114,7 +1093,7 @@ Provide a concise suggestion for what to add at the cursor position. Only provid
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${isUser ? 'user-message' : 'assistant-message'}`;
 
-        
+
             let processedContent = content;
 
             const improvementSections = content.match(/### .+?[\s\S]+?(?=###|$)/g) || [];
@@ -1146,7 +1125,7 @@ Provide a concise suggestion for what to add at the cursor position. Only provid
                 processedContent = processedContent.replace(section, sectionHtml);
             });
 
-            
+
             const codeBlocks = processedContent.match(/```[\s\S]*?```/g) || [];
             codeBlocks.forEach(block => {
                 const code = block.replace(/```(\w*)\n?/, '').replace(/```$/, '');
@@ -1415,14 +1394,14 @@ Provide a concise suggestion for what to add at the cursor position. Only provid
                             document.querySelector('.tab-button[data-for="html"]').click();
                         } else if (fileName.endsWith('.css')) {
                             cssEditor.value = content;
-                        
+
                             document.querySelector('.tab-button[data-for="css"]').click();
                         } else if (fileName.endsWith('.js')) {
                             jsEditor.value = content;
-                           
+
                             document.querySelector('.tab-button[data-for="js"]').click();
                         } else {
-    
+
                             if (content.includes('<html') || content.includes('<!DOCTYPE')) {
                                 htmlEditor.value = content;
                                 document.querySelector('.tab-button[data-for="html"]').click();

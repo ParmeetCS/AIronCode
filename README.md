@@ -78,8 +78,8 @@ Highlight the most important features of your project:
 ## 🧪 How to Run the Project
 
 ### Requirements:
-It is hosted with Vercel so by simply open the provided link everyone can access this AI code editor
-Link- https://a-iron-code.vercel.app/
+-It is hosted with Vercel so by simply open the provided link everyone can access this AI code editor
+-Link- https://a-iron-code.vercel.app/
 ---
 ## 🧬 Future Scope
 

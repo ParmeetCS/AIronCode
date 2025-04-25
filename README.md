@@ -11,14 +11,13 @@
 Problem Statement-1- Weave AI Magic with Groq
 
 ## 🎯 Objective
-It is a AI-driven code editor powered by Groq's ultra fast interference to analyse cone in real time, providing intelligent suggestions, AI-assited lintings and auto-generated documentation.Enable seamless collaboration features and innovative enhancements to streamline workflows and boost developer productivity.
+-It is a AI-driven code editor powered by Groq's ultra fast interference to analyse cone in real time, providing intelligent suggestions, AI-assited lintings and auto-generated documentation.Enable seamless collaboration features and innovative enhancements to streamline workflows and boost developer productivity.
 
-The main group that we a targeting is Developers,Professionals and students
-As it is AI powered platform and provide very fast AI assistance it is helpful in fast workflow
+-Our primary target audience includes developers, professionals, and students. As an AI-powered platform, it offers rapid and intelligent assistance, significantly boosting workflow efficiency.
 
-In real life targeting groups can use in their day to day work sessions for enhance their productivity by using this platform those are working with languages-HTML,CSS and JavaScript.
+-In real-world scenarios, our target users can integrate this platform into their daily work sessions to enhance productivity—especially those working with web development languages like HTML, CSS, and JavaScript.
 
-It gives AI suggestions and have in-built AI assitant for review the code and make suggested changes
+-The platform provides AI-driven suggestions and features a built-in AI assistant that reviews code and recommends improvements, helping users write cleaner, more efficient code effortlessly.
 
 ## 🧠 Team & Approach
 
